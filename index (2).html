@@ -1,0 +1,1093 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+<link rel="apple-touch-icon" href="apple-touch-icon.png" />
+<link rel="icon" type="image/png" href="icon-192.png" />
+<link rel="manifest" href="manifest.json" />
+<meta name="apple-mobile-web-app-title" content="Cortes" />
+<meta name="application-name" content="Cortes" />
+<meta name="theme-color" content="#07070B" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300..700&display=swap" rel="stylesheet" />
+<title>Registro de cortes · Barbería Elite</title>
+</head>
+<body>
+<div id="app"></div>
+
+<style>
+  html, body{ margin:0; padding:0; background:#07070B; }
+  body{
+    min-height:100vh;
+    background:
+      radial-gradient(1.5px 1.5px at 12% 14%, rgba(255,255,255,.55), transparent),
+      radial-gradient(1px 1px at 78% 9%, rgba(255,255,255,.45), transparent),
+      radial-gradient(1.5px 1.5px at 91% 34%, rgba(160,140,255,.6), transparent),
+      radial-gradient(1px 1px at 6% 52%, rgba(255,255,255,.35), transparent),
+      radial-gradient(1.5px 1.5px at 94% 71%, rgba(255,255,255,.4), transparent),
+      radial-gradient(1px 1px at 22% 88%, rgba(160,140,255,.5), transparent),
+      radial-gradient(1px 1px at 63% 95%, rgba(255,255,255,.4), transparent),
+      #07070B;
+    background-attachment: fixed;
+  }
+  body::before, body::after{
+    content:''; position:fixed; border-radius:50%; pointer-events:none; z-index:0;
+    border:1px solid rgba(255,255,255,.07);
+  }
+  body::before{ width:760px; height:760px; left:-440px; top:-330px; }
+  body::after{ width:680px; height:680px; right:-400px; bottom:-300px; border-color: rgba(255,255,255,.055); }
+
+  :root{
+    color-scheme: dark;
+    --text:#ECECF3;
+    --text-dim:#8C8C9E;
+    --accent:#A58BFF;
+    --violet:#7B5CFF;
+    --violet-deep:#4B34D6;
+    --line:rgba(255,255,255,.09);
+    --panel:rgba(255,255,255,.03);
+    --danger:#FF7A8E;
+    --good:#6EE7A8;
+    --blue:#7B5CFF;
+    font-family: 'Plus Jakarta Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  }
+
+  * { box-sizing: border-box; }
+
+  #app{
+    position: relative;
+    z-index: 1;
+    max-width: 520px;
+    margin: 14px auto;
+    min-height: calc(100vh - 28px);
+    padding: 20px 16px 30px;
+    background: linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.015));
+    border: 1px solid rgba(255,255,255,.08);
+    border-radius: 32px;
+    color: var(--text);
+    font-size: 15px;
+    line-height: 1.4;
+  }
+
+  /* Encabezado */
+  .top{
+    display:flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+  .brand{
+    display:flex;
+    align-items:center;
+    gap: 10px;
+    font-size: 19px;
+    font-weight: 600;
+    letter-spacing: -.02em;
+  }
+  .pole{
+    width: 10px;
+    height: 26px;
+    border-radius: 6px;
+    background: repeating-linear-gradient(-45deg, #8E6BFF 0 5px, #ECECF3 5px 10px, #4B34D6 10px 15px);
+    box-shadow: 0 0 14px rgba(123,92,255,.55);
+  }
+  .page-sub{ color: var(--text-dim); font-size: 12.5px; margin: 3px 0 0 20px; }
+  .who{
+    display:flex;
+    gap: 2px;
+    padding: 4px;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    background: var(--panel);
+  }
+  .chip{
+    position: relative;
+    padding: 7px 13px;
+    font-size: 13px;
+    font-weight: 500;
+    border-radius: 999px;
+    color: var(--text-dim);
+  }
+  .who .chip:first-child{ background: rgba(255,255,255,.07); color: var(--text); }
+  .who .chip:first-child::after{
+    content:''; position:absolute; left:28%; right:28%; bottom:2px; height:2px; border-radius:2px;
+    background: linear-gradient(90deg, transparent, #8E6BFF, transparent);
+  }
+
+  /* Pantallas de configuración inicial */
+  .eyebrow{ color: var(--text-dim); font-size: 13px; font-weight: 500; margin-bottom: 4px; }
+  h1{ margin: 0 0 4px; font-size: 27px; font-weight: 600; letter-spacing: -.02em; }
+  .subtitle{ color: var(--text-dim); font-size: 14px; margin-bottom: 18px; }
+
+  /* Paneles */
+  .card{
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 26px;
+    padding: 18px 16px 16px;
+    margin-bottom: 14px;
+  }
+  .field{ margin-top: 16px; }
+  .row{ display:flex; gap:10px; }
+  .row > *{ flex:1; }
+
+  label{
+    display:block;
+    font-size: 12.5px;
+    font-weight: 400;
+    color: var(--text-dim);
+    margin: 0 0 8px 6px;
+  }
+
+  input, select{
+    width: 100%;
+    background: var(--panel);
+    border: 1px solid var(--line);
+    color: var(--text);
+    padding: 13px 20px;
+    border-radius: 999px;
+    font-size: 16px;
+    font-weight: 400;
+    font-family: inherit;
+  }
+  select[hidden]{ display:none; }
+  input::placeholder{ color: #565669; }
+  input:focus, select:focus{
+    outline: none;
+    border-color: #8E6BFF;
+    box-shadow: 0 0 0 3px rgba(123,92,255,.20);
+  }
+  button:focus-visible{ outline: 2px solid #8E6BFF; outline-offset: 2px; }
+  input[type=number]{ font-variant-numeric: tabular-nums; }
+  #price{ font-size: 24px; font-weight: 500; letter-spacing: -.01em; padding-top: 11px; padding-bottom: 11px; }
+
+  .seg{
+    display:flex;
+    gap: 4px;
+    padding: 4px;
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 999px;
+  }
+  .seg button{
+    flex: 1;
+    border: none;
+    background: transparent;
+    color: var(--text-dim);
+    font: inherit;
+    font-size: 14px;
+    font-weight: 500;
+    padding: 12px 6px;
+    border-radius: 999px;
+    cursor: pointer;
+  }
+  .seg button.on{
+    background: rgba(123,92,255,.20);
+    color: #fff;
+    box-shadow: inset 0 0 0 1px rgba(142,107,255,.75), 0 0 20px rgba(123,92,255,.28);
+  }
+
+  .btn{
+    width: 100%;
+    background: linear-gradient(135deg, var(--violet-deep), var(--violet));
+    color: #fff;
+    border: none;
+    padding: 16px;
+    border-radius: 999px;
+    font: inherit;
+    font-weight: 600;
+    font-size: 16px;
+    cursor: pointer;
+    margin-top: 20px;
+    box-shadow: 0 10px 30px rgba(107,78,255,.38), inset 0 1px 0 rgba(255,255,255,.25);
+  }
+  .btn:hover{ filter: brightness(1.1); }
+  .btn:active{ transform: scale(.985); }
+  .btn.secondary{
+    background: var(--panel);
+    color: var(--text);
+    border: 1px solid var(--line);
+    font-weight: 500;
+    font-size: 15px;
+    margin-top: 10px;
+    box-shadow: none;
+  }
+  .btn.secondary:hover{ background: rgba(255,255,255,.07); filter: none; }
+  .btn.danger-outline{
+    background: transparent;
+    color: var(--danger);
+    border: 1px solid rgba(255,122,142,.5);
+    font-weight: 500;
+    font-size: 15px;
+    box-shadow: none;
+  }
+
+  /* Encabezados de panel */
+  .section-title{
+    display:flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 10px;
+    font-size: 17px;
+    font-weight: 500;
+    letter-spacing: -.01em;
+    margin: 26px 6px 10px;
+  }
+  .section-title span + span{
+    font-size: 12.5px;
+    font-weight: 400;
+    color: var(--text-dim);
+    letter-spacing: 0;
+  }
+  .section-title + .card{ padding: 4px 16px 6px; }
+  .section-title .btn{ border-radius: 999px; }
+
+  .cut-row{
+    display:flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--line);
+    font-size: 15px;
+    font-weight: 500;
+  }
+  .cut-row:last-child{ border-bottom:none; }
+  .cut-meta{ color: var(--text-dim); font-size: 12.5px; font-weight: 400; }
+  .cut-amt{ font-variant-numeric: tabular-nums; font-weight: 600; }
+  .cut-comm{ color: var(--good); font-size: 12.5px; font-weight: 500; font-variant-numeric: tabular-nums; }
+  .del{
+    width: 34px; height: 34px; padding: 0;
+    display: inline-flex; align-items: center; justify-content: center;
+    background: none; border: 1px solid var(--line); border-radius: 50%;
+    color: var(--text-dim); cursor: pointer;
+    font-size: 13px; margin-left: 10px; flex: none;
+  }
+  .del:hover{ color: var(--danger); border-color: rgba(255,122,142,.5); }
+
+  .empty{ color: var(--text-dim); font-size: 14px; padding: 18px 0; }
+
+  .day-row{
+    display:flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 13px 0;
+    border-bottom: 1px solid var(--line);
+    font-size: 15px;
+  }
+  .day-row:last-child{ border-bottom: none; }
+  .day-row .d{ color: var(--text); font-weight: 400; }
+  .day-row .v{ font-variant-numeric: tabular-nums; font-weight: 500; white-space: nowrap; padding-left: 12px; display:flex; align-items:center; }
+  .day-row.today .d{ color: var(--accent); font-weight: 600; }
+  .chev{ font-size: 10px; color: var(--text-dim); margin-left: 4px; vertical-align: 1px; }
+
+  /* Lo que se paga */
+  .payout-banner{
+    position: relative;
+    overflow: hidden;
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 26px;
+    padding: 20px 20px 22px;
+    margin: 26px 0 14px;
+  }
+  .payout-banner > .lbl, .payout-banner > .num, .payout-banner > .sub{ position: relative; z-index: 1; }
+  .payout-banner .lbl{ font-size: 13px; color: var(--text-dim); }
+  .payout-banner .num{
+    font-size: 42px;
+    font-weight: 600;
+    letter-spacing: -.03em;
+    font-variant-numeric: tabular-nums;
+    margin-top: 8px;
+    line-height: 1.1;
+    color: #fff;
+  }
+  .payout-banner .sub{ font-size: 13px; color: var(--text-dim); margin-top: 10px; }
+
+  .orbs{
+    position: absolute;
+    right: 14px; top: 12px;
+    width: 84px; height: 84px;
+    border-radius: 50%;
+    border: 1px solid rgba(255,255,255,.07);
+    background: radial-gradient(circle, rgba(255,255,255,.06), transparent 70%);
+    z-index: 0;
+  }
+  .orbs i{ position:absolute; border-radius:50%; }
+  .orbs i:nth-child(1){
+    width: 40px; height: 40px; left: 10px; top: 28px;
+    background: radial-gradient(circle at 35% 30%, #FFD08A, #FF8A3D 65%, #C2410C);
+    box-shadow: 0 0 20px rgba(255,138,61,.45);
+  }
+  .orbs i:nth-child(2){
+    width: 30px; height: 30px; left: 42px; top: 38px;
+    background: radial-gradient(circle at 35% 30%, #9BE7FF, #3BA9FF 65%, #2563EB);
+    box-shadow: 0 0 18px rgba(59,169,255,.45);
+  }
+  .orbs i:nth-child(3){
+    width: 24px; height: 24px; left: 40px; top: 12px;
+    background: radial-gradient(circle at 35% 30%, #F5B3FF, #D946EF 65%, #A21CAF);
+    box-shadow: 0 0 16px rgba(217,70,239,.5);
+  }
+
+  /* Semana sin cerrar */
+  .unlock-banner{
+    background: rgba(255,122,142,.07);
+    border: 1px solid rgba(255,122,142,.35);
+    border-radius: 24px;
+    padding: 14px 16px 16px;
+    margin-bottom: 16px;
+  }
+  .unlock-banner .t{ font-weight: 600; font-size: 15px; color: #FFB3C0; }
+  .unlock-banner .d{ font-size: 13.5px; color: var(--text-dim); margin: 4px 0 8px; }
+
+  .toast{
+    position: fixed;
+    bottom: 22px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #12121A;
+    color: #fff;
+    border: 1px solid rgba(142,107,255,.55);
+    padding: 12px 20px;
+    border-radius: 999px;
+    font-size: 14px;
+    font-weight: 500;
+    box-shadow: 0 8px 30px rgba(107,78,255,.3);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity .25s, transform .25s;
+    z-index: 50;
+  }
+  .toast.show{ opacity: 1; transform: translateX(-50%) translateY(-6px); }
+
+  @media (prefers-reduced-motion: reduce){
+    .btn:active{ transform: none; }
+    .toast{ transition: none; }
+  }
+
+  .print-sheet{ display:none; }
+  @media print{
+    body *{ visibility:hidden; }
+    .print-sheet, .print-sheet *{ visibility:visible; }
+    .print-sheet{
+      display:block;
+      position:absolute;
+      top:0; left:0;
+      width:100%;
+      background:#fff;
+      color:#111;
+      padding: 24px;
+      font-family: -apple-system, Arial, sans-serif;
+    }
+    .print-sheet h2{ margin:0 0 2px; font-size:20px; }
+    .print-sheet .ps-sub{ color:#555; font-size:12px; margin-bottom:16px; }
+    .print-sheet table{ width:100%; border-collapse:collapse; font-size:13px; }
+    .print-sheet th, .print-sheet td{ text-align:left; padding:6px 4px; border-bottom:1px solid #ddd; }
+    .print-sheet tfoot td{ font-weight:700; border-top:2px solid #111; border-bottom:none; }
+    .print-sheet .ps-total{ margin-top:18px; font-size:16px; font-weight:800; }
+  }
+</style>
+
+<script>
+// ---------- Remote storage (jsonbin.io) ----------
+// BIN_ID queda vacío hasta que Kevin crea el bin una vez (ver setup screen).
+// Una vez creado, Claude lo graba acá para que quede fijo en el archivo final.
+const JSONBIN_MASTER_KEY = '$2a$10$Dck.rsDiFltrDIPLDsB52.cGIAeErW3resCGyhodR0ZpEYAN5pO7.';
+let JSONBIN_BIN_ID = '6a5b0317da38895dfe6dd4a1';
+
+function defaultRemoteData(){
+  return { config: { commissionPct: 60, employeeName: 'Marcos' }, cutsLog: {}, weekHistory: [] };
+}
+
+async function createBin(){
+  const res = await fetch('https://api.jsonbin.io/v3/b', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'X-Master-Key': JSONBIN_MASTER_KEY,
+      'X-Bin-Name': 'barberia-elite-registro-cortes'
+    },
+    body: JSON.stringify(defaultRemoteData())
+  });
+  if(!res.ok) throw new Error('No se pudo crear el almacenamiento');
+  const json = await res.json();
+  return json.metadata.id;
+}
+
+// Lee el bin. Si algo sale mal (sin conexión, límite agotado, datos raros) TIRA ERROR:
+// nunca devuelve datos vacíos "de mentira", para no pisar los datos reales.
+async function fetchRemote(){
+  const res = await fetch(`https://api.jsonbin.io/v3/b/${JSONBIN_BIN_ID}/latest`, {
+    headers: { 'X-Master-Key': JSONBIN_MASTER_KEY }
+  });
+  if(!res.ok) throw new Error('No se pudo leer el almacenamiento (' + res.status + ')');
+  const json = await res.json();
+  const r = json && json.record;
+  if(!r || typeof r !== 'object' || !r.config || typeof r.cutsLog !== 'object' || !Array.isArray(r.weekHistory)){
+    throw new Error('Datos inválidos en el almacenamiento');
+  }
+  try{ localStorage.setItem('lastGoodData', JSON.stringify(r)); }catch(e){}
+  return r;
+}
+
+// Escribe el bin y VERIFICA que se guardó. Si falla, tira error.
+async function pushRemote(data){
+  const res = await fetch(`https://api.jsonbin.io/v3/b/${JSONBIN_BIN_ID}`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json', 'X-Master-Key': JSONBIN_MASTER_KEY },
+    body: JSON.stringify(data)
+  });
+  if(!res.ok) throw new Error('No se pudo guardar (' + res.status + ')');
+}
+
+// In-memory mirror of the remote bin, synced on load/save/poll.
+let remoteData = defaultRemoteData();
+
+async function saveConfig(cfg){ remoteData.config = cfg; await pushRemote(remoteData); }
+async function saveCuts(log){ remoteData.cutsLog = log; await pushRemote(remoteData); }
+async function saveHistory(hist){ remoteData.weekHistory = hist; await pushRemote(remoteData); }
+// Guarda historial y cortes en UNA sola escritura (para que no quede a medias)
+async function saveBoth(hist, log){
+  remoteData.weekHistory = hist;
+  remoteData.cutsLog = log;
+  await pushRemote(remoteData);
+}
+
+// ---------- Estado de conexión y cortes pendientes de enviar ----------
+let outbox = [];          // cortes anotados que todavía no llegaron al almacenamiento
+try{ outbox = JSON.parse(localStorage.getItem('outbox') || '[]'); }catch(e){ outbox = []; }
+function saveOutbox(){ try{ localStorage.setItem('outbox', JSON.stringify(outbox)); }catch(e){} }
+
+let lastErr = '';
+function setStatus(ok, err){
+  if(err) lastErr = err;
+  let b = document.getElementById('syncBanner');
+  if(!b){
+    b = document.createElement('div');
+    b.id = 'syncBanner';
+    b.style.cssText = 'position:fixed;top:0;left:0;right:0;z-index:9999;padding:10px 14px;font:600 13px/1.35 system-ui,sans-serif;text-align:center;background:#b3261e;color:#fff;display:none;';
+    document.body.appendChild(b);
+  }
+  if(ok && !outbox.length){ b.style.display = 'none'; return; }
+  b.style.display = 'block';
+  b.textContent = outbox.length
+    ? '⚠ Sin conexión con el almacenamiento. ' + outbox.length + ' corte(s) guardado(s) en este celular; se envían solos cuando vuelva.'
+    : '⚠ Sin conexión con el almacenamiento. Lo que ves puede no estar al día.';
+  if(lastErr) b.textContent += ' [' + lastErr + ']';
+}
+
+// Hace que lo que se ve incluya los cortes pendientes (aunque todavía no estén en el almacenamiento)
+function applyOutboxToView(){
+  outbox.forEach(({k, entry})=>{
+    if(!cutsLog[k]) cutsLog[k] = [];
+    if(!cutsLog[k].some(c => c.id === entry.id)) cutsLog[k].push(entry);
+  });
+}
+
+function adoptRemote(r){
+  remoteData = r;
+  config = remoteData.config;
+  cutsLog = remoteData.cutsLog;
+  weekHistory = remoteData.weekHistory;
+  applyOutboxToView();
+}
+
+// Envía los cortes pendientes: lee lo último, agrega los pendientes y escribe.
+let flushing = false;
+async function flushOutbox(){
+  if(!outbox.length) return true;
+  if(flushing) return false;
+  flushing = true;
+  try{
+    const remote = await fetchRemote();
+    outbox.forEach(({k, entry})=>{
+      if(!remote.cutsLog[k]) remote.cutsLog[k] = [];
+      if(!remote.cutsLog[k].some(c => c.id === entry.id)) remote.cutsLog[k].push(entry);
+    });
+    await pushRemote(remote);
+    outbox = []; saveOutbox();
+    adoptRemote(remote);
+    setStatus(true);
+    return true;
+  }catch(e){
+    setStatus(false, e.message);
+    return false;
+  }finally{
+    flushing = false;
+  }
+}
+
+// Antes de borrar / cerrar semana: traer lo último del almacenamiento. Si no se puede, NO se hace nada.
+async function refreshForWrite(){
+  try{
+    if(outbox.length && !(await flushOutbox())) throw new Error('pendientes');
+    adoptRemote(await fetchRemote());
+    setStatus(true);
+    return true;
+  }catch(e){
+    setStatus(false);
+    showToast('Sin conexión con el almacenamiento. Probá de nuevo en un momento.');
+    return false;
+  }
+}
+
+// ---------- Date helpers ----------
+function todayKey(d = new Date()){
+  return d.toISOString().slice(0,10);
+}
+function mondayOf(d){
+  const dt = new Date(d);
+  const day = dt.getDay(); // 0=Sun..6=Sat
+  const diff = day === 0 ? -6 : 1 - day;
+  dt.setDate(dt.getDate() + diff);
+  dt.setHours(0,0,0,0);
+  return dt;
+}
+function weekDates(anchor = new Date()){
+  const mon = mondayOf(anchor);
+  const arr = [];
+  for(let i=0;i<6;i++){ // Lunes a Sábado, el local no abre los domingos
+    const d = new Date(mon);
+    d.setDate(mon.getDate()+i);
+    arr.push(d);
+  }
+  return arr;
+}
+const DIAS = ['Lun','Mar','Mié','Jue','Vie','Sáb','Dom'];
+function fmtMoney(n){
+  return '$' + Number(n).toLocaleString('es-AR', { maximumFractionDigits: 0 });
+}
+function fmtTime(iso){
+  const d = new Date(iso);
+  return d.toLocaleTimeString('es-AR', { hour:'2-digit', minute:'2-digit' });
+}
+
+function printWeekSheet(data){
+  let sheet = document.querySelector('.print-sheet');
+  if(!sheet){
+    sheet = document.createElement('div');
+    sheet.className = 'print-sheet';
+    document.body.appendChild(sheet);
+  }
+  const rowsHtml = data.days.map(d => `<tr>
+    <td>${d.label}</td><td>${d.cuts}</td><td>${fmtMoney(d.revenue)}</td><td>${fmtMoney(d.commission)}</td>
+  </tr>`).join('');
+  sheet.innerHTML = `
+    <h2>Resumen semanal · Barbería Elite</h2>
+    <div class="ps-sub">${data.employeeName ? 'Empleado: ' + data.employeeName + ' · ' : ''}Semana ${data.rangeLabel} · Comisión ${data.commissionPct}%</div>
+    <table>
+      <thead><tr><th>Día</th><th>Cortes</th><th>Facturado</th><th>Comisión</th></tr></thead>
+      <tbody>${rowsHtml}</tbody>
+      <tfoot><tr><td>Total</td><td>${data.totalCuts}</td><td>${fmtMoney(data.totalRevenue)}</td><td>${fmtMoney(data.totalCommission)}</td></tr></tfoot>
+    </table>
+    <div class="ps-total">A pagar: ${fmtMoney(data.totalCommission)}</div>
+  `;
+  setTimeout(()=> window.print(), 50);
+}
+
+
+let config = { commissionPct: 60, employeeName: 'Marcos' };
+let cutsLog = {}; // { 'YYYY-MM-DD': [ {id, price, service, time} ] }
+let weekHistory = []; // archive of closed weeks: { rangeLabel, employeeName, commissionPct, days:[...], totalCuts, totalRevenue, totalCommission, closedAt }
+let showHistory = false;
+let selService = 'Corte';
+let selPay = 'Efectivo';
+let expandedDay = null; // date key (YYYY-MM-DD) of the day currently expanded in "Semana actual"
+
+const app = document.getElementById('app');
+
+function showToast(msg){
+  const t = document.createElement('div');
+  t.className = 'toast';
+  t.textContent = msg;
+  app.appendChild(t);
+  requestAnimationFrame(()=> t.classList.add('show'));
+  setTimeout(()=>{
+    t.classList.remove('show');
+    setTimeout(()=> t.remove(), 300);
+  }, 1800);
+}
+
+function segHtml(target, options, current){
+  return `<div class="seg" role="group" data-target="${target}">` +
+    options.map(o => `<button type="button" data-val="${o}" class="${o === current ? 'on' : ''}" aria-pressed="${o === current}">${o}</button>`).join('') +
+    `</div>`;
+}
+
+function buildDayRows(dates, tKey, pct){
+  let totalRevenue = 0, totalCommission = 0;
+  const html = dates.map(d => {
+    const k = todayKey(d);
+    const cuts = cutsLog[k] || [];
+    const rev = cuts.reduce((s,c)=> s + Number(c.price), 0);
+    totalRevenue += rev;
+    totalCommission += rev * pct;
+    const isToday = k === tKey;
+    const isOpen = expandedDay === k;
+    const detailHtml = isOpen ? `
+      <div style="padding: 4px 0 8px 10px;">
+        ${cuts.length ? cuts.map(c => `
+          <div class="cut-row" style="padding:6px 0; font-size:13px;">
+            <div>
+              <div>${c.service}</div>
+              <div class="cut-meta">${fmtTime(c.time)} · ${c.payment || '—'}</div>
+            </div>
+            <div class="cut-amt">${fmtMoney(c.price)}</div>
+          </div>
+        `).join('') : `<div class="empty" style="padding:8px 0;">Sin cortes este día.</div>`}
+      </div>` : '';
+    return `<div>
+      <div class="day-row ${isToday ? 'today' : ''}" data-day-toggle="${k}" style="cursor:pointer;">
+        <span class="d">${DIAS[(d.getDay()+6)%7]} ${d.getDate()}/${d.getMonth()+1}${isToday ? ' · hoy' : ''} <span class="chev">${isOpen ? '▲' : '▼'}</span></span>
+        <span class="v">${cuts.length} cortes · ${fmtMoney(rev)}</span>
+      </div>
+      ${detailHtml}
+    </div>`;
+  }).join('');
+  return { html, totalRevenue, totalCommission };
+}
+
+function pendingWeeks(){
+  const currentMonday = mondayOf(new Date());
+  const buckets = {};
+  Object.keys(cutsLog).forEach(dateStr => {
+    if(!cutsLog[dateStr] || !cutsLog[dateStr].length) return;
+    const d = new Date(dateStr + 'T00:00:00');
+    const mon = mondayOf(d);
+    if(mon.getTime() >= currentMonday.getTime()) return;
+    const monKey = todayKey(mon);
+    if(!buckets[monKey]) buckets[monKey] = mon;
+  });
+  return Object.values(buckets).sort((a,b)=> a-b);
+}
+
+function buildWeekSnapshot(datesArr, pct){
+  const first = datesArr[0], last = datesArr[5];
+  const rangeLabel = `${first.getDate()}/${first.getMonth()+1} al ${last.getDate()}/${last.getMonth()+1}/${last.getFullYear()}`;
+  const days = datesArr.map(d=>{
+    const k = todayKey(d);
+    const cuts = cutsLog[k] || [];
+    const rev = cuts.reduce((s,c)=> s + Number(c.price), 0);
+    return { label: `${DIAS[(d.getDay()+6)%7]} ${d.getDate()}/${d.getMonth()+1}`, cuts: cuts.length, revenue: rev, commission: rev * pct };
+  });
+  const totalRevenue = days.reduce((s,d)=>s+d.revenue,0);
+  const totalCommission = totalRevenue * pct;
+  return { rangeLabel, days, totalCuts: days.reduce((s,d)=>s+d.cuts,0), totalRevenue, totalCommission };
+}
+
+function render(){
+  const today = new Date();
+  config.employeeName = 'Marcos'; // nombre fijo, no editable
+  const tKey = todayKey(today);
+  const week = weekDates(today);
+  const todayCuts = cutsLog[tKey] || [];
+
+  const pct = 0.6; // comisión fija 60%, no editable
+
+  const { html: dayRowsHtml, totalRevenue: weekTotalRevenue, totalCommission: weekTotalCommission } = buildDayRows(week, tKey, pct);
+
+  const pendingMondays = pendingWeeks();
+  const pendingHtml = pendingMondays.map(mon => {
+    const pWeek = weekDates(mon);
+    const { html, totalRevenue, totalCommission } = buildDayRows(pWeek, tKey, pct);
+    const first = pWeek[0], last = pWeek[5];
+    const rangeLabel = `${first.getDate()}/${first.getMonth()+1} al ${last.getDate()}/${last.getMonth()+1}/${last.getFullYear()}`;
+    const monKey = todayKey(mon);
+    return `
+    <div class="unlock-banner">
+      <div class="t">Semana sin cerrar: ${rangeLabel}</div>
+      <div class="d">No se cerró a tiempo. Los cortes siguen guardados — revisalos, descargá el PDF y cerrala cuando quieras.</div>
+      ${html}
+      <div style="display:flex; gap:8px; margin-top:10px;">
+        <button class="btn secondary" data-pending-pdf="${monKey}" style="margin:0;">⬇ PDF</button>
+        <button class="btn" data-pending-close="${monKey}" style="margin:0;">Cerrar y archivar</button>
+      </div>
+    </div>`;
+  }).join('');
+
+  const todayRevenue = todayCuts.reduce((s,c)=> s + Number(c.price), 0);
+  const todayCommission = todayRevenue * pct;
+
+  const todayCutsHtml = todayCuts.length
+    ? todayCuts.slice().reverse().map(c => `
+      <div class="cut-row">
+        <div>
+          <div>${c.service}</div>
+          <div class="cut-meta">${fmtTime(c.time)}${c.payment ? ' · ' + c.payment : ''}</div>
+        </div>
+        <div style="text-align:right; display:flex; align-items:center;">
+          <div>
+            <div class="cut-amt">${fmtMoney(c.price)}</div>
+            <div class="cut-comm">+${fmtMoney(c.price * pct)}</div>
+          </div>
+          <button class="del" data-del="${c.id}" title="Eliminar">✕</button>
+        </div>
+      </div>
+    `).join('')
+    : `<div class="empty">Todavía no cargaste cortes hoy.</div>`;
+
+  app.innerHTML = `
+    <header class="top">
+      <div>
+        <div class="brand"><span class="pole" aria-hidden="true"></span>Barbería Elite</div>
+        <div class="page-sub">Registro de cortes</div>
+      </div>
+      <div class="who">
+        <span class="chip">${config.employeeName}</span>
+        <span class="chip">60%</span>
+      </div>
+    </header>
+    ${pendingHtml}
+
+    <div class="card">
+      <label>Servicio</label>
+      <select id="service" hidden>
+        <option>Corte</option>
+        <option>Barba</option>
+        <option>Corte + Barba</option>
+      </select>
+      ${segHtml('service', ['Corte','Barba','Corte + Barba'], selService)}
+      <div class="field">
+        <label for="price">Precio</label>
+        <input id="price" type="number" inputmode="numeric" min="0" placeholder="0" />
+      </div>
+      <div class="field">
+        <label>Pago</label>
+        <select id="paymentMethod" hidden>
+          <option>Efectivo</option>
+          <option>Transferencia</option>
+        </select>
+        ${segHtml('paymentMethod', ['Efectivo','Transferencia'], selPay)}
+      </div>
+      <button class="btn" id="addCut">Registrar corte</button>
+    </div>
+
+    <div class="section-title">
+      <span>Hoy</span>
+      <span>${todayCuts.length} corte${todayCuts.length===1?'':'s'} · ${fmtMoney(todayCommission)} de comisión</span>
+    </div>
+    <div class="card">
+      ${todayCutsHtml}
+    </div>
+
+    <div class="section-title"><span>Semana actual</span></div>
+    <div class="card">
+      ${dayRowsHtml}
+    </div>
+
+    <div class="payout-banner">
+      <div class="orbs" aria-hidden="true"><i></i><i></i><i></i></div>
+      <div class="lbl">A pagar esta semana</div>
+      <div class="num">${fmtMoney(weekTotalCommission)}</div>
+      <div class="sub">sobre ${fmtMoney(weekTotalRevenue)} facturados · comisión 60%</div>
+    </div>
+
+    <button class="btn secondary" id="closeWeek">Cerrar semana y pagar</button>
+
+    <div class="section-title">
+      <span>Semanas anteriores</span>
+      ${!showHistory ? `<button class="btn secondary" id="toggleHistory" style="width:auto; margin:0; padding:5px 10px; font-size:11px;">Ver</button>` : ''}
+    </div>
+    ${showHistory ? `
+    <div class="card">
+      ${weekHistory.length
+        ? weekHistory.map((w, i) => `
+          <div class="day-row">
+            <span class="d">${w.rangeLabel}${w.employeeName ? ' · ' + w.employeeName : ''}</span>
+            <span class="v" style="display:flex; align-items:center; gap:8px;">
+              ${w.totalCuts} cortes · ${fmtMoney(w.totalCommission)}
+              <button class="del" data-hist-pdf="${i}" title="Descargar PDF">⬇</button>
+            </span>
+          </div>
+        `).join('')
+        : `<div class="empty">Todavía no cerraste ninguna semana.</div>`
+      }
+      ${weekHistory.length ? `<button class="btn danger-outline" id="clearHistory" style="margin-top:12px;">Borrar historial de semanas anteriores</button>` : ''}
+    </div>` : ''}
+  `;
+
+  // ---- Event bindings ----
+
+
+  document.getElementById('service').value = selService;
+  document.getElementById('paymentMethod').value = selPay;
+  app.querySelectorAll('.seg').forEach(seg=>{
+    const target = seg.getAttribute('data-target');
+    const sel = document.getElementById(target);
+    seg.querySelectorAll('button').forEach(b=>{
+      b.addEventListener('click', ()=>{
+        const val = b.getAttribute('data-val');
+        sel.value = val;
+        if(target === 'service') selService = val; else selPay = val;
+        seg.querySelectorAll('button').forEach(x=>{
+          x.classList.toggle('on', x === b);
+          x.setAttribute('aria-pressed', x === b ? 'true' : 'false');
+        });
+      });
+    });
+  });
+
+  app.querySelectorAll('[data-day-toggle]').forEach(el=>{
+    el.addEventListener('click', ()=>{
+      const k = el.getAttribute('data-day-toggle');
+      expandedDay = (expandedDay === k) ? null : k;
+      render();
+    });
+  });
+
+  document.getElementById('addCut').addEventListener('click', async ()=>{
+    const priceEl = document.getElementById('price');
+    const serviceEl = document.getElementById('service');
+    const paymentEl = document.getElementById('paymentMethod');
+    const price = Number(priceEl.value);
+    if(!price || price <= 0){
+      priceEl.focus();
+      showToast('Ingresá un precio válido');
+      return;
+    }
+    const entry = {
+      id: Date.now().toString(36) + Math.random().toString(36).slice(2,6),
+      price,
+      service: serviceEl.value,
+      payment: paymentEl.value,
+      time: new Date().toISOString()
+    };
+    const k = todayKey();
+    selService = 'Corte';
+    selPay = 'Efectivo';
+    // Primero queda guardado en este celular, después se envía. Así nunca se pierde.
+    outbox.push({ k, entry });
+    saveOutbox();
+    applyOutboxToView();
+    render();
+    const ok = await flushOutbox();
+    render();
+    showToast(ok ? 'Corte registrado' : 'Sin conexión: guardado en este celular, se envía solo');
+  });
+  app.querySelectorAll('[data-del]').forEach(btn=>{
+    btn.addEventListener('click', async ()=>{
+      const id = btn.getAttribute('data-del');
+      if(!(await refreshForWrite())) return;
+      const k = todayKey();
+      cutsLog[k] = (cutsLog[k] || []).filter(c => c.id !== id);
+      try{
+        await saveCuts(cutsLog);
+      }catch(e){
+        showToast('No se pudo borrar. Probá de nuevo.');
+        try{ adoptRemote(await fetchRemote()); }catch(_){}
+      }
+      render();
+    });
+  });
+
+  app.querySelectorAll('[data-pending-pdf]').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      const monKey = btn.getAttribute('data-pending-pdf');
+      const mon = new Date(monKey + 'T00:00:00');
+      const snap = buildWeekSnapshot(weekDates(mon), pct);
+      printWeekSheet({ ...snap, employeeName: config.employeeName, commissionPct: 60 });
+    });
+  });
+  app.querySelectorAll('[data-pending-close]').forEach(btn=>{
+    btn.addEventListener('click', async ()=>{
+      if(!confirm('¿Cerrar y archivar esta semana pendiente? Se guarda en el historial y se borra el detalle diario.')) return;
+      if(!(await refreshForWrite())) return;
+      const monKey = btn.getAttribute('data-pending-close');
+      const mon = new Date(monKey + 'T00:00:00');
+      const pWeek = weekDates(mon);
+      const snap = buildWeekSnapshot(pWeek, pct);
+      const newHist = [{
+        ...snap, employeeName: config.employeeName, commissionPct: 60,
+        closedAt: new Date().toISOString()
+      }, ...weekHistory].slice(0, 26);
+      pWeek.forEach(d => { delete cutsLog[todayKey(d)]; });
+      try{
+        await saveBoth(newHist, cutsLog);
+        weekHistory = newHist;
+        showToast('Semana pendiente cerrada y archivada');
+      }catch(e){
+        showToast('No se pudo guardar. No se cerró nada, probá de nuevo.');
+        try{ adoptRemote(await fetchRemote()); }catch(_){}
+      }
+      render();
+    });
+  });
+
+  document.getElementById('closeWeek').addEventListener('click', async ()=>{
+    if(!confirm('¿Cerrar la semana? Se guarda un resumen permanente en el historial y se borra el detalle diario para arrancar de cero.')){
+      return;
+    }
+    if(!(await refreshForWrite())) return;
+    const snap = buildWeekSnapshot(week, pct);
+    const newHist = [{
+      ...snap, employeeName: config.employeeName, commissionPct: 60,
+      closedAt: new Date().toISOString()
+    }, ...weekHistory].slice(0, 26); // ~6 meses de respaldo
+    week.forEach(d => { delete cutsLog[todayKey(d)]; });
+    try{
+      await saveBoth(newHist, cutsLog);
+      weekHistory = newHist;
+      showToast('Semana cerrada y guardada en el historial');
+    }catch(e){
+      showToast('No se pudo guardar. No se cerró nada, probá de nuevo.');
+      try{ adoptRemote(await fetchRemote()); }catch(_){}
+    }
+    render();
+  });
+
+  const toggleHistBtn = document.getElementById('toggleHistory');
+  if(toggleHistBtn){
+    toggleHistBtn.addEventListener('click', ()=>{
+      showHistory = true;
+      render();
+    });
+  }
+  const clearHistBtn = document.getElementById('clearHistory');
+  if(clearHistBtn){
+    clearHistBtn.addEventListener('click', async ()=>{
+      if(!confirm('¿Borrar todo el historial de semanas anteriores? No se puede deshacer.')) return;
+      if(!(await refreshForWrite())) return;
+      try{
+        await saveHistory([]);
+        weekHistory = [];
+        showToast('Historial borrado');
+      }catch(e){
+        showToast('No se pudo borrar. Probá de nuevo.');
+      }
+      render();
+    });
+  }
+  app.querySelectorAll('[data-hist-pdf]').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      const idx = Number(btn.getAttribute('data-hist-pdf'));
+      const w = weekHistory[idx];
+      if(w) printWeekSheet(w);
+    });
+  });
+
+}
+
+// ---------- Live sync across devices ----------
+let syncing = false;
+async function syncFromRemote(){
+  if(!JSONBIN_BIN_ID) return;
+  if(syncing) return;
+  // don't yank focus away if someone is mid-typing on this device
+  const active = document.activeElement;
+  const isTyping = active && (active.tagName === 'INPUT' || active.tagName === 'SELECT');
+  if(isTyping) return;
+  syncing = true;
+  try{
+    if(outbox.length){
+      await flushOutbox();
+      render();
+    }else{
+      const remote = await fetchRemote();
+      const changed = JSON.stringify(remote) !== JSON.stringify(remoteData);
+      if(changed){
+        adoptRemote(remote);
+        render();
+      }
+      setStatus(true);
+    }
+    failCount = 0;
+  }catch(e){
+    failCount++;
+    setStatus(false, e.message); // avisa que no hay conexión; NO borra lo que se ve
+  }
+  syncing = false;
+}
+
+// Consulta cada 30 s, solo con la app visible (y más espaciado si hay fallas)
+let failCount = 0, lastPoll = 0;
+function pollTick(){
+  if(document.visibilityState !== 'visible') return;
+  const wait = failCount > 0 ? 120000 : 30000;
+  if(Date.now() - lastPoll < wait) return;
+  lastPoll = Date.now();
+  syncFromRemote();
+}
+
+// ---------- One-time storage setup ----------
+function renderSetup(){
+  app.innerHTML = `
+    <div class="eyebrow">Barbería Elite</div>
+    <h1>Registro de cortes</h1>
+    <div class="subtitle">Primera vez que se abre este archivo — hay que crear el almacenamiento compartido, una sola vez.</div>
+    <div class="card">
+      <button class="btn" id="createBinBtn">Crear almacenamiento</button>
+      <div id="setupMsg" class="cut-meta" style="margin-top:10px;"></div>
+    </div>
+  `;
+  document.getElementById('createBinBtn').addEventListener('click', async ()=>{
+    const msg = document.getElementById('setupMsg');
+    msg.textContent = 'Creando…';
+    try{
+      const id = await createBin();
+      JSONBIN_BIN_ID = id;
+      remoteData = defaultRemoteData();
+      config = remoteData.config;
+      cutsLog = remoteData.cutsLog;
+      weekHistory = remoteData.weekHistory;
+      app.innerHTML = `
+        <div class="eyebrow">Barbería Elite</div>
+        <h1>¡Listo!</h1>
+        <div class="card">
+          <div class="cut-meta" style="font-size:13px; line-height:1.5; margin-bottom:10px;">
+            Se creó el almacenamiento. Mandale este código a Kevin (por chat) para que quede guardado para siempre en el archivo:
+          </div>
+          <input readonly value="${id}" style="text-align:center; font-weight:800;" onclick="this.select()" />
+          <button class="btn" id="continueBtn" style="margin-top:14px;">Usar la app ahora</button>
+        </div>
+      `;
+      document.getElementById('continueBtn').addEventListener('click', ()=> render());
+    }catch(e){
+      msg.textContent = 'Hubo un error creando el almacenamiento. Revisá la conexión y probá de nuevo.';
+    }
+  });
+}
+
+// ---------- Init ----------
+(async function init(){
+  if(!JSONBIN_BIN_ID){
+    renderSetup();
+    return;
+  }
+  app.innerHTML = '<div class="empty" style="padding-top:40px;">Cargando…</div>';
+  let loaded = null;
+  try{
+    loaded = await fetchRemote();
+  }catch(e){
+    // Nunca arrancar en blanco: usar la última copia buena de este dispositivo, o mostrar error.
+    try{ loaded = JSON.parse(localStorage.getItem('lastGoodData') || 'null'); }catch(_){ loaded = null; }
+    if(!loaded || !loaded.config || !loaded.cutsLog || !Array.isArray(loaded.weekHistory)){
+      app.innerHTML = `
+        <div class="eyebrow">Barbería Elite</div>
+        <h1>Sin conexión</h1>
+        <div class="card">
+          <div class="cut-meta" style="font-size:14px; line-height:1.5; margin-bottom:14px;">
+            No se pudo conectar con el almacenamiento. Tus datos no se borraron. Revisá tu conexión y probá de nuevo.
+          </div>
+          <div class="cut-meta" style="font-size:12px; margin-bottom:14px; opacity:.8;">Detalle técnico: ${String(e && e.message || e)}</div>
+          <button class="btn" id="retryBtn">Reintentar</button>
+        </div>`;
+      document.getElementById('retryBtn').addEventListener('click', ()=> location.reload());
+      return;
+    }
+    setStatus(false, e.message);
+  }
+  adoptRemote(loaded);
+  render();
+  if(outbox.length) flushOutbox().then(()=> render());
+  lastPoll = Date.now();
+  setInterval(pollTick, 5000);
+  document.addEventListener('visibilitychange', ()=>{
+    if(document.visibilityState === 'visible'){ lastPoll = 0; pollTick(); }
+  });
+})();
+</script>
+</body>
+</html>
